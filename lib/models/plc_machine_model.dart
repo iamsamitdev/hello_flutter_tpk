@@ -9,7 +9,7 @@ List<PlcMachineModel> plcMachineModelFromJson(String str) => List<PlcMachineMode
 String plcMachineModelToJson(List<PlcMachineModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class PlcMachineModel {
-    int? id;
+    String? id;
     String? name;
     String? imageUrl;
     String? location;

@@ -43,12 +43,12 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: initialRoute,
       routes: {
-        '/home': (context) => Home(),
-        '/about': (context) => About(),
-        '/welcome':(context) => Welcome(),
-        '/login':(context) => Login(),
-        '/dashboard':(context) => Dashboard(),
-        '/machine_detail':(context) => MachineDetail(),
+        '/home': (context) => const Home(),
+        '/about': (context) => const About(),
+        '/welcome':(context) => const Welcome(),
+        '/login':(context) => const Login(),
+        '/dashboard':(context) => const Dashboard(),
+        '/machine_detail':(context) => const MachineDetail(),
       },
     );
   }
