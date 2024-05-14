@@ -1,0 +1,1 @@
+const baseURLAPI = 'https://www.itgenius.co.th/sandbox_api/plcapi/';
