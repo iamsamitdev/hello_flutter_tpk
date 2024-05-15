@@ -99,7 +99,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 ListTile(
                   title: Text('Contact Us'),
-                  leading: Icon(Icons.info),
+                  leading: Icon(Icons.email),
                   onTap: () {},
                 ),
               ],

@@ -152,13 +152,6 @@ class _MachineDetailState extends State<MachineDetail> {
                 ElevatedButton(
                   onPressed: () async {
 
-                    print(
-                      {
-                        'id': arguments['id'],
-                        'status': machineStatus!,
-                        'maintenance_status': maintenanceStatus!,
-                      }
-                    );
                     // ส่งข้อมูลไปยัง API เพื่อปรับ status ของ machine
                     var response = await MachineAPI().updateMachineStatus(
                       {

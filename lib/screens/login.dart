@@ -90,6 +90,9 @@ class _LoginState extends State<Login> {
                             ),
                             SizedBox(height: 20),
                             ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(double.infinity, 50),
+                              ),
                               onPressed: () async {
                                 // เมื่อกดปุ่ม login ให้ทำการ validate ค่าในฟอร์ม
                                 if(_formLoginKey.currentState!.validate()){

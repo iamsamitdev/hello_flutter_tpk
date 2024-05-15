@@ -40,6 +40,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+       fontFamily: 'NotoSansThai',
+       appBarTheme: const AppBarTheme(
+        titleTextStyle: TextStyle(
+          fontFamily: 'NotoSansThai',
+        ),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
        primarySwatch: Colors.blue,
        useMaterial3: false,
       ),
