@@ -1,13 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:hello_flutter/models/plc_machine_model.dart';
-import 'package:hello_flutter/services/machine_api.dart';
+import 'package:hello_flutter/screens/home.dart';
+import 'package:hello_flutter/screens/machine.dart';
+import 'package:hello_flutter/screens/profile.dart';
 import 'package:hello_flutter/utils/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// สร้าง key สำหรับ refreshIndicator
-var refreshKey = GlobalKey<RefreshIndicatorState>();
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -32,24 +30,35 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
-  // ทดสอบเรียก API จาก MachineAPI
-  // สร้างตัวแปร List เพื่อเก็บข้อมูลที่ได้จาก API
-  List<PlcMachineModel> machineData = [];
+  // ส่วนของการกำหนด BottomNavigationBar
+  // กำหนดตัวแปร currentIndex ให้เป็น 0
+  int _currentIndex = 0;
 
-  // สร้างเมธอดสำหรับเรียกข้อมูลจาก API
-  void _getMachineData() async {
-    var data = await MachineAPI().getAllMachine();
+  // สร้างตัวแปรเก็บ title ของแต่ละหน้า
+  String _title = 'Machine Management';
+
+  // สร้าง List ของหน้าที่ต้องการเปลี่ยน
+  final List<Widget> _children = [
+    Home(),
+    Machine(),
+    Profile(),
+  ];
+
+  // สร้างเมธอดสำหรับเปลี่ยนหน้า
+  void onTabTapped(int index) {
     setState(() {
-      machineData = data;
+      _currentIndex = index;
+      switch (index) {
+        case 0: _title = 'Dashboard'; break;
+        case 1: _title = 'Machine'; break;
+        case 2: _title = 'Profile'; break;
+      }
     });
-    // var jsonData = jsonEncode(data);
-    // print(jsonData);
   }
 
   @override
   void initState() {
     super.initState();
-    _getMachineData();
     _getUserData();
   }
 
@@ -57,7 +66,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(_title),
         actions: [
           IconButton(
             onPressed: (){
@@ -119,43 +128,27 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
       ),
-      body: RefreshIndicator(
-        key: refreshKey,
-        onRefresh: () async {
-          _getMachineData(); // อ่านข้อมูลใหม่จาก API
+      body: _children[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (index) {
+          onTabTapped(index);
         },
-        child: ListView.builder(
-          itemCount: machineData.length,
-          itemBuilder: (context, index) {
-            final machine = machineData[index];
-            return ListTile(
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  Uri.parse(baseURLAPI+machine.imageUrl!).toString(),
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              title: Text(machine.name!),
-              subtitle: Text(machine.location!),
-              trailing: Text(
-                machine.status!,
-                style: TextStyle(
-                  color: machine.status == 'ทำงานปกติ' ? Colors.green : Colors.red
-                ),
-              ),
-              onTap: () {
-                Navigator.pushNamed(
-                  context, 
-                  '/machine_detail', 
-                  arguments: machine.toJson()
-                );
-              },
-            );
-          }
-        ),
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.space_dashboard_outlined),
+            label: 'Dashboard'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.build_circle_outlined),
+            label: 'Machine'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile'
+          )
+        ],
       ),
     );
   }

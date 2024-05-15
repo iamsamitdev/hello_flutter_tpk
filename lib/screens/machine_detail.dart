@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:hello_flutter/screens/dashboard.dart';
+import 'package:hello_flutter/screens/machine.dart';
 import 'package:hello_flutter/services/machine_api.dart';
 import 'package:hello_flutter/utils/constant.dart';
 
