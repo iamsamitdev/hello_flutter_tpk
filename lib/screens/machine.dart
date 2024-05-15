@@ -61,11 +61,29 @@ class _MachineState extends State<Machine> {
               ),
               title: Text(machine.name!),
               subtitle: Text(machine.location!),
-              trailing: Text(
-                machine.status!,
-                style: TextStyle(
-                  color: machine.status == 'ทำงานปกติ' ? Colors.green : Colors.red
-                ),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    machine.status!,
+                    style: TextStyle(
+                      color: machine.status == 'ทำงานปกติ' ? Colors.green : Colors.red
+                    ),
+                  ),
+                  Text(
+                    machine.maintenanceStatus!,
+                    style: TextStyle(
+                      color: machine.maintenanceStatus == 'ไม่ต้องซ่อมบำรุง' ? Colors.green : Colors.yellow[700]
+                    ),
+                  ),
+                ],
+              ),
+              shape: Border(
+                  bottom: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 1,
+                  ),
               ),
               onTap: () {
                 Navigator.pushNamed(
