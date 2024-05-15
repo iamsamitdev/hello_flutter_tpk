@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/services/auth_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -67,7 +70,7 @@ class _LoginState extends State<Login> {
                             ),
                             SizedBox(height: 10),
                             TextFormField(
-                              initialValue: '1234',
+                              initialValue: '123456',
                               obscureText: true,
                               decoration: InputDecoration(
                                 hintText: 'Password',
@@ -94,14 +97,28 @@ class _LoginState extends State<Login> {
                                   _formLoginKey.currentState!.save();
 
                                   // แสดงค่าที่ได้จากการกรอกในฟอร์ม
-                                  print('Email: $_email');
-                                  print('Password: $_password');
+                                  // print('Email: $_email');
+                                  // print('Password: $_password');
+
+                                  // เรียกใช้งาน API สำหรับ login
+                                  var response = await AuthAPI().loginAPI(
+                                    {
+                                    'email': _email,
+                                    'password': _password,
+                                    }
+                                  );
+
+                                  var body = jsonDecode(response.body);
 
                                   // ตรวจเงื่อนไขการ login
-                                  if(_email == 'admin@email.com' && _password == '1234'){
+                                  if(body['status'] == 'success'){
                                     // บันทึกข้อมูลการ login ลงในเครื่อง
                                     SharedPreferences prefs = await SharedPreferences.getInstance();
                                     prefs.setBool('loginStatus', true);
+                                    prefs.setString('loginFullname', body['user']['fullname']);
+                                    prefs.setString('loginEmail', body['user']['email']);
+                                    prefs.setString('loginRole', body['user']['role']);
+                                    prefs.setString('loginAvatar', body['user']['avatar']);
                                     
                                     // ส่งไปหน้า dashboard
                                     Navigator.pushReplacementNamed(context, '/dashboard');
