@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/screens/about.dart';
+import 'package:hello_flutter/screens/chart.dart';
 import 'package:hello_flutter/screens/dashboard.dart';
 import 'package:hello_flutter/screens/home.dart';
 import 'package:hello_flutter/screens/login.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
        primarySwatch: Colors.blue,
        useMaterial3: false,
@@ -49,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/login':(context) => const Login(),
         '/dashboard':(context) => const Dashboard(),
         '/machine_detail':(context) => const MachineDetail(),
+        '/chart':(context) => const ChartReport(),
       },
     );
   }

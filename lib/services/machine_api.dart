@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:hello_flutter/utils/constant.dart';
 import 'package:hello_flutter/models/plc_machine_model.dart';
@@ -22,6 +24,15 @@ class MachineAPI {
     } else {
       return [];
     }
+  }
+
+  // สร้างเมธอดสำหรับปรับ status ของ machine
+  updateMachineStatus(data) async {
+    return await http.put(
+      Uri.parse('${baseURLAPI}machine.php'),
+      body: jsonEncode(data),
+      headers: _setHeaders(),
+    );
   }
 
 }

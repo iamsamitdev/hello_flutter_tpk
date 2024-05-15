@@ -42,6 +42,9 @@ dependencies:
   # Shared preferences
   shared_preferences: ^2.2.3
 
+  # Syncfusion Flutter Charts
+  syncfusion_flutter_charts: ^20.2.36
+
   # http
   http: ^1.2.1
 

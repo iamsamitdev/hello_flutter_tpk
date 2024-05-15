@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/screens/dashboard.dart';
+import 'package:hello_flutter/services/machine_api.dart';
 import 'package:hello_flutter/utils/constant.dart';
 
 class MachineDetail extends StatefulWidget {
@@ -13,14 +17,17 @@ class MachineDetail extends StatefulWidget {
 class _MachineDetailState extends State<MachineDetail> {
 
   // กำหนดตัวแปรปรับ machine status และ maintenance status
-  bool? machineStatus = false;
-  bool? maintenanceStatus = false;
+  bool? machineStatus = true;
+  bool? maintenanceStatus = true;
 
   @override
   Widget build(BuildContext context) {
 
     // รับค่าที่ส่งมาจากหน้า dashboard
     final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
+
+    // machineStatus = arguments['status'] == 'ทำงานปกติ' ? true : false;
+    // maintenanceStatus = arguments['maintenance_status'] == 'ไม่ต้องซ่อมบำรุง' ? true : false;
 
     return Scaffold(
       appBar: AppBar(
@@ -66,7 +73,12 @@ class _MachineDetailState extends State<MachineDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Machine status:'),
-                    Text(arguments['status']),
+                    Text(
+                      arguments['status'],
+                      style: TextStyle(
+                        color: arguments['status'] == 'หยุดทำงาน' ? Colors.red : Colors.green
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10),
@@ -74,7 +86,12 @@ class _MachineDetailState extends State<MachineDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Maintenence Status:'),
-                    Text(arguments['maintenance_status']),
+                    Text(
+                      arguments['maintenance_status'],
+                      style: TextStyle(
+                        color: arguments['maintenance_status'] == 'รอซ่อมบำรุง' ? Colors.yellow : Colors.green
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10),
@@ -106,12 +123,12 @@ class _MachineDetailState extends State<MachineDetail> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Machine Status'),
+                    Text('Stop Machine'),
                     Switch(
-                      value: arguments['status'] == 'หยุดทำงาน' ?  machineStatus!: !machineStatus!, 
+                      value: !machineStatus!, 
                       onChanged: (value) {
                         setState(() {
-                          machineStatus = machineStatus! ? false : true;
+                          machineStatus = !machineStatus!;
                         });
                       }
                     )
@@ -120,12 +137,12 @@ class _MachineDetailState extends State<MachineDetail> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Manchine Maintenence'),
+                    Text('Start Maintenence'),
                     Switch(
-                      value: arguments['maintenance_status'] == 'รอซ่อมบำรุง' ?  maintenanceStatus!: !maintenanceStatus!, 
+                      value: !maintenanceStatus!, 
                       onChanged: (value) {
                         setState(() {
-                          maintenanceStatus = maintenanceStatus! ? false : true;
+                          maintenanceStatus = !maintenanceStatus!;
                         });
                       }
                     )
@@ -133,7 +150,40 @@ class _MachineDetailState extends State<MachineDetail> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: (){},
+                  onPressed: () async {
+
+                    print(
+                      {
+                        'id': arguments['id'],
+                        'status': machineStatus!,
+                        'maintenance_status': maintenanceStatus!,
+                      }
+                    );
+                    // ส่งข้อมูลไปยัง API เพื่อปรับ status ของ machine
+                    var response = await MachineAPI().updateMachineStatus(
+                      {
+                        'id': arguments['id'],
+                        'status': machineStatus!,
+                        'maintenance_status': maintenanceStatus!,
+                      }
+                    );
+                    var body = jsonDecode(response.body);
+                    
+                    if(body['message'] != null){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          content: Text(body['message']),
+                          duration: Duration(seconds: 3),
+                          backgroundColor: Colors.green,
+                        )
+                      );
+                      Navigator.pop(context);
+                      // Reload หน้า dashboard
+                      refreshKey.currentState!.show();
+
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(double.infinity, 50),
                   ),

@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/models/plc_machine_model.dart';
 import 'package:hello_flutter/services/machine_api.dart';
 import 'package:hello_flutter/utils/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// สร้าง key สำหรับ refreshIndicator
+var refreshKey = GlobalKey<RefreshIndicatorState>();
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -45,6 +46,12 @@ class _DashboardState extends State<Dashboard> {
         actions: [
           IconButton(
             onPressed: (){
+              Navigator.pushNamed(context, '/chart');
+            }, 
+            icon: const Icon(Icons.bar_chart),
+          ),
+          IconButton(
+            onPressed: (){
               Navigator.pushNamed(context, '/about');
             }, 
             icon: const Icon(Icons.qr_code),
@@ -60,32 +67,43 @@ class _DashboardState extends State<Dashboard> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: machineData.length,
-        itemBuilder: (context, index) {
-          final machine = machineData[index];
-          return ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                Uri.parse(baseURLAPI+machine.imageUrl!).toString(),
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
+      body: RefreshIndicator(
+        key: refreshKey,
+        onRefresh: () async {
+          _getMachineData(); // อ่านข้อมูลใหม่จาก API
+        },
+        child: ListView.builder(
+          itemCount: machineData.length,
+          itemBuilder: (context, index) {
+            final machine = machineData[index];
+            return ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  Uri.parse(baseURLAPI+machine.imageUrl!).toString(),
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            title: Text(machine.name!),
-            subtitle: Text(machine.location!),
-            trailing: Text(machine.status!),
-            onTap: () {
-              Navigator.pushNamed(
-                context, 
-                '/machine_detail', 
-                arguments: machine.toJson()
-              );
-            },
-          );
-        }
+              title: Text(machine.name!),
+              subtitle: Text(machine.location!),
+              trailing: Text(
+                machine.status!,
+                style: TextStyle(
+                  color: machine.status == 'ทำงานปกติ' ? Colors.green : Colors.red
+                ),
+              ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context, 
+                  '/machine_detail', 
+                  arguments: machine.toJson()
+                );
+              },
+            );
+          }
+        ),
       ),
     );
   }
